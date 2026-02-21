@@ -191,16 +191,18 @@ class TerapiBalurForm
                         FileUpload::make('image_tembaga')
                             ->label('Foto Tembaga')
                             ->image()
-                            ->imageEditor()
-                            ->maxSize(10240)
-                            ->directory('terapi/tembaga'),
+                            ->disk('public')
+                            ->directory('terapi/tembaga')
+                            ->visibility('public')
+                            ->maxSize(10240),
 
                         FileUpload::make('image_patient')
                             ->label('Foto Kondisi Pasien')
                             ->image()
-                            ->imageEditor()
-                            ->maxSize(10240)
-                            ->directory('terapi/pasien'),
+                            ->disk('public')
+                            ->directory('terapi/pasien')
+                            ->visibility('public')
+                            ->maxSize(10240),
                     ]),
             ]);
     }

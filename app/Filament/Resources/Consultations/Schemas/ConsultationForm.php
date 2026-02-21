@@ -37,7 +37,7 @@ class ConsultationForm
 
                         DateTimePicker::make('consultation_datetime')
                             ->label('Tanggal & Waktu Konsultasi')
-                            ->default(now('Asia/Jakarta')) 
+                            ->default(now('Asia/Jakarta'))
                             ->displayFormat('d M Y H:i')
                             ->seconds(false)
                             ->required()
@@ -52,7 +52,10 @@ class ConsultationForm
                             ->label('Riwayat Penyakit Sebelumnya')
                             ->columnSpanFull(),
                         Textarea::make('physical_examination')
-                            ->label('Pemeriksaan Fisik')
+                            ->label('Pemeriksaan Fisik/Pengobatan')
+                            ->columnSpanFull(),
+                        TextInput::make('merokok')
+                            ->label('Merokok (Iya/Tidak)')
                             ->columnSpanFull(),
                         Textarea::make('diagnosis')
                             ->label('Diagnosa')
@@ -61,7 +64,7 @@ class ConsultationForm
                             ->label('Rencana Perawatan')
                             ->columnSpanFull(),
                         Textarea::make('doctor_notes')
-                            ->label('Catatan Dokter')
+                            ->label('Pemeriksaan yang Dibutuhkan')
                             ->columnSpanFull(),
                         Select::make('therapist_id')
                             ->relationship(

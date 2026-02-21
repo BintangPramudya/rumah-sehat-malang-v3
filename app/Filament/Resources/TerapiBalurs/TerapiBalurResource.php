@@ -78,9 +78,11 @@ class TerapiBalurResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        // Kalau bukan Admin, filter berdasarkan user_id
-        if (! auth()->user()->hasRole('Admin')) {
-            $query->where('user_id', auth()->id());
+        $user = auth()->user();
+
+        // Jika bukan Admin dan bukan Dokter
+        if (! $user->hasRole(['Admin', 'Dokter'])) {
+            $query->where('user_id', $user->id);
         }
 
         return $query;

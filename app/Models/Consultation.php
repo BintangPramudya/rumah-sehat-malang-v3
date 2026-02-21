@@ -14,6 +14,7 @@ class Consultation extends Model
         'current_illness_history',
         'past_medical_history',
         'physical_examination',
+        'merokok',
         'diagnosis',
         'treatment_plan',
         'doctor_notes',
