@@ -49,6 +49,23 @@ class PatientsTable
                         'danger' => 'Perempuan',
                     ]),
 
+		TextColumn::make('therapist_name')
+    ->label('Terapis')
+    ->getStateUsing(function ($record) {
+        $consultation = $record->consultations()
+            ->latest()
+            ->first();
+
+        return $consultation?->therapist?->name ?? 'Belum Ditentukan';
+    })
+    ->badge()
+    ->color(function ($state) {
+        if ($state === 'Belum Ditentukan') {
+            return 'gray';
+        }
+
+        return 'warning'; 
+    }),
 
                 TextColumn::make('address')
                     ->label('Alamat')

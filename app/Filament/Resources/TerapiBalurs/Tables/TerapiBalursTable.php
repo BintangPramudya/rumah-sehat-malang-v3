@@ -22,8 +22,6 @@ class TerapiBalursTable
                     ->searchable()
                     ->sortable(),
 
-
-
                 Tables\Columns\TextColumn::make('therapy_datetime')
                     ->label('Tanggal Terapi')
                     ->dateTime('d M Y H:i')
@@ -57,13 +55,16 @@ class TerapiBalursTable
 
                 ImageColumn::make('image_tembaga')
                     ->label('Dokumentasi Terapi')
+                    ->disk('public') // WAJIB
                     ->height(50)
                     ->circular(),
 
                 ImageColumn::make('image_patient')
                     ->label('Foto Kondisi Pasien')
+                    ->disk('public') // WAJIB
                     ->height(50)
                     ->circular(),
+
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Terapis')
@@ -81,11 +82,19 @@ class TerapiBalursTable
                 EditAction::make(),
 
                 Action::make('tambah_terapi')
-                    ->label(fn($record) => 'Lanjut sesi Terapi berikutnya ')
+                    ->label('Lanjut sesi Terapi berikutnya')
                     ->icon('heroicon-o-plus')
                     ->color('success')
                     ->visible(function ($record) {
 
+                        $user = auth()->user();
+
+                        // Cek apakah user punya role Terapis
+                        if (! $user->hasRole('Terapis')) {
+                            return false;
+                        }
+
+                        // Cek apakah ini sesi terakhir
                         $latest = \App\Models\TerapiBalur::where('patient_id', $record->patient_id)
                             ->latest('therapy_datetime')
                             ->first();

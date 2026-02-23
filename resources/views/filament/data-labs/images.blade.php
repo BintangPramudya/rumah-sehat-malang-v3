@@ -1,15 +1,8 @@
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    @foreach (($record->images ?? []) as $path)
-        <a
-            href="{{ asset('storage/' . ltrim($path, '/')) }}"
-            target="_blank"
-            class="group block"
-        >
-            <img
-                src="{{ asset('storage/' . ltrim($path, '/')) }}"
-                class="w-full h-48 object-cover rounded-lg border shadow-sm
-                       transition-transform group-hover:scale-105"
-            >
+<div class="grid grid-cols-3 gap-4">
+    @foreach ($getState() ?? [] as $image)
+        <a href="{{ asset('storage/' . $image) }}" target="_blank">
+            <img src="{{ asset('storage/' . $image) }}"
+                class="rounded-lg shadow cursor-pointer hover:scale-105 transition">
         </a>
     @endforeach
 </div>

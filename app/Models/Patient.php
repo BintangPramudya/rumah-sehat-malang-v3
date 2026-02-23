@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\TerapiBalur;
 use App\Models\Consultation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Patient extends Model
 {
@@ -45,6 +46,9 @@ class Patient extends Model
     }
 
 
+    use SoftDeletes;
+
+
     protected static function booted()
     {
         static::creating(function ($patient) {
@@ -55,9 +59,13 @@ class Patient extends Model
             $month = self::romanMonth($today->month);
             $day   = $today->format('d');
 
-            $countToday = self::whereDate('created_at', $today->toDateString())->count() + 1;
+            // Ambil nomor terbesar dari SEMUA data aktif
+            $lastNumber = self::selectRaw("MAX(CAST(RIGHT(medical_record_number,4) AS UNSIGNED)) as max_number")
+                ->value('max_number');
 
-            $urut = str_pad($countToday, 4, '0', STR_PAD_LEFT);
+            $nextNumber = $lastNumber ? $lastNumber + 1 : 1;
+
+            $urut = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
             $patient->medical_record_number = "{$year}/{$month}/{$day}/{$urut}";
         });
