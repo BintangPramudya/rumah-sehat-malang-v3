@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\TerapiBalurs\Schemas;
 
 use App\Models\Consultation;
-use App\Models\Patient;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -14,6 +13,9 @@ use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Maestroerror\HeicToJpg;
 
 class TerapiBalurForm
 {
@@ -23,9 +25,11 @@ class TerapiBalurForm
             ->columns(1)
             ->components([
 
-                /* =========================
-                 * DATA PASIEN
-                 * ========================= */
+                /*
+                =========================================
+                DATA PASIEN
+                =========================================
+                */
                 Section::make('Data Pasien')
                     ->columns(2)
                     ->schema([
@@ -37,7 +41,6 @@ class TerapiBalurForm
                                     $q->where('therapist_id', Auth::id());
                                 });
 
-                                // Kalau belum ada nilai patient_id (create normal)
                                 if (! $get('patient_id')) {
                                     $query->whereDoesntHave('terapiBalurs');
                                 }
@@ -60,10 +63,6 @@ class TerapiBalurForm
                                 $set('teraphist_notes_preview', $consultation?->teraphist_notes);
                             }),
 
-
-
-
-
                         DateTimePicker::make('therapy_datetime')
                             ->label('Tanggal & Waktu Terapi')
                             ->default(now('Asia/Jakarta'))
@@ -72,15 +71,18 @@ class TerapiBalurForm
                             ->required(),
                     ]),
 
-                /* =========================
-                 * KONDISI PASIEN
-                 * ========================= */
+                /*
+                =========================================
+                KONDISI PASIEN
+                =========================================
+                */
                 Section::make('Kondisi Pasien')
                     ->schema([
                         TextInput::make('tensi')
                             ->label('Tensi')
                             ->placeholder('Contoh: 120/80 mmHg')
                             ->columnSpanFull(),
+
                         Textarea::make('pre_complaint')
                             ->label('Keluhan Sebelum Terapi')
                             ->columnSpanFull(),
@@ -88,13 +90,12 @@ class TerapiBalurForm
                         Textarea::make('post_complaint')
                             ->label('Keluhan Setelah Terapi')
                             ->columnSpanFull(),
-
-
                     ]),
+
                 Hidden::make('doctor_treatment_plan_preview'),
                 Hidden::make('teraphist_notes_preview'),
+
                 Section::make('Catatan dari Dokter')
-                    ->description('Diisi oleh dokter sebelum terapi dilakukan')
                     ->schema([
                         Textarea::make('doctor_treatment_plan_preview')
                             ->label('Rencana Perawatan Dokter')
@@ -109,9 +110,6 @@ class TerapiBalurForm
                             ->columnSpanFull(),
                     ])
                     ->visible(fn($get) => filled($get('consultation_id'))),
-
-
-
 
                 /* =========================
                  * TERAPI TAMBAHAN
@@ -182,45 +180,84 @@ class TerapiBalurForm
                             ->columnSpanFull(),
                     ]),
 
-                /* =========================
-                 * DOKUMENTASI
-                 * ========================= */
+                /*
+                =========================================
+                DOKUMENTASI (AUTO HEIC CONVERT)
+                =========================================
+                */
                 Section::make('Dokumentasi Terapi')
                     ->columns(2)
                     ->schema([
+
                         FileUpload::make('image_tembaga')
                             ->label('Foto Tembaga')
                             ->image()
                             ->disk('public')
                             ->directory('terapi/tembaga')
-                            ->visibility('public')
-                            ->maxSize(10240),
+                            ->acceptedFileTypes([
+                                'image/jpeg',
+                                'image/png',
+                                'image/heic',
+                            ])
+
+                            ->saveUploadedFileUsing(
+                                fn($file) =>
+                                self::handleUploadWithHeic($file, 'terapi/tembaga')
+                            ),
 
                         FileUpload::make('image_patient')
                             ->label('Foto Kondisi Pasien')
                             ->image()
                             ->disk('public')
                             ->directory('terapi/pasien')
-                            ->visibility('public')
-                            ->maxSize(10240),
+                            ->acceptedFileTypes([
+                                'image/jpeg',
+                                'image/png',
+                                'image/heic',
+                            ])
 
-                       FileUpload::make('image_tembaga')
-->label('Foto Tembaga')
-    ->image()
-    ->disk('public')
-    ->directory('terapi/tembaga')
-    ->visibility('public')
-    ,
-
-FileUpload::make('image_patient')
-    ->label('Foto Kondisi Pasien')
-    ->image()
-    ->disk('public')
-    ->directory('terapi/pasien')
-    ->visibility('public')
-    ,
-
+                            ->saveUploadedFileUsing(
+                                fn($file) =>
+                                self::handleUploadWithHeic($file, 'terapi/pasien')
+                            ),
                     ]),
             ]);
+    }
+
+    /*
+    =========================================
+    FUNCTION AUTO CONVERT HEIC
+    =========================================
+    */
+    /*
+=========================================
+FUNCTION AUTO CONVERT HEIC (OPTIMIZED)
+=========================================
+*/
+    protected static function handleUploadWithHeic($file, string $directory): string
+    {
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // Kalau bukan HEIC → langsung simpan biasa (SUPER CEPAT)
+        if ($extension !== 'heic') {
+            return $file->store($directory, 'public');
+        }
+
+        // Kalau HEIC → convert
+        $filename = Str::uuid() . '.jpg';
+
+        // Simpan HEIC sementara dulu
+        $tempHeicPath = $file->store($directory, 'public');
+        $fullHeicPath = storage_path('app/public/' . $tempHeicPath);
+
+        $fullJpgPath = storage_path('app/public/' . $directory . '/' . $filename);
+
+        // Convert
+        HeicToJpg::convert($fullHeicPath)->saveAs($fullJpgPath);
+
+        // Hapus HEIC asli supaya tidak dobel file
+        unlink($fullHeicPath);
+
+        return $directory . '/' . $filename;
     }
 }

@@ -45,13 +45,15 @@ class ViewTerapiBalur extends ViewRecord
 
                     TextEntry::make('enema')
                         ->label('Enema')
-                        ->formatStateUsing(fn ($state) =>
+                        ->formatStateUsing(
+                            fn($state) =>
                             is_array($state) ? implode(', ', $state) : '-'
                         ),
 
                     TextEntry::make('minum')
                         ->label('Minum')
-                        ->formatStateUsing(fn ($state) =>
+                        ->formatStateUsing(
+                            fn($state) =>
                             is_array($state) ? implode(', ', $state) : '-'
                         ),
 

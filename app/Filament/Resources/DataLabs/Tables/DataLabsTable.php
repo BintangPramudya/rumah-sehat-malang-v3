@@ -56,17 +56,23 @@ class DataLabsTable
                     ->visible(fn ($record) => filled($record->images))
                     ->url(function ($record) {
 
-                        $image = is_array($record->images)
-                            ? ($record->images[0] ?? null)
-                            : $record->images;
+                        // $image = is_array($record->images)
+                        //     ? (implode('+', $record->images) ?? null)
+                        //     : $record->images;
 
-                        if (! $image) {
-                            return null;
-                        }
+                        // if (! $image) {
+                        //     return null;
+                        // }
 
-                        return route('file.download', [
-                            'path' => str_replace('/', '|', $image),
-                        ]);
+                        // return route('file.download', [
+                        //     'path' => str_replace('/', '|', $image),
+                        //     // 'path' => $image."/".$record->patient_id,
+                        // ]);
+                        
+                            return route('data-lab.batch.download', [
+                                'id' => $record->id,
+                            ]);
+
                     }),
             ])
 

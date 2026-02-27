@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\FileDownloadController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage; // <-- WAJIB TAMBAH INI
 
@@ -10,7 +11,6 @@ Route::get('/consultation/{consultation}/print', [ConsultationController::class,
     ->name('consultation.print');
 
 Route::get('/download-file/{path}', function ($path) {
-
     $path = str_replace('|', '/', $path);
 
     if (! Storage::disk('public')->exists($path)) {
@@ -18,29 +18,35 @@ Route::get('/download-file/{path}', function ($path) {
     }
 
     return Storage::disk('public')->download($path);
-
 })->where('path', '.*')->name('file.download');
 
-
-Route::get('/lab-preview/{path}', function ($path) {
+Route::get('/preview/{path}', function ($path) {
     $path = str_replace('|', '/', $path);
 
-    if (! Storage::disk('public')->exists($path)) {
+    if (!Storage::disk('public')->exists($path)) {
         abort(404);
     }
 
     return response()->file(
-        Storage::disk('public')->path($path)
+        storage_path('app/public/' . $path)
     );
-})->where('path', '.*')->name('lab.preview');
+})->name('terapi.preview');
+
+
+
+
 
 
 Route::get('/lab-download/{path}', function ($path) {
     $path = str_replace('|', '/', $path);
-
     if (! Storage::disk('public')->exists($path)) {
         abort(404);
     }
 
     return Storage::disk('public')->download($path);
 })->where('path', '.*')->name('lab.download');
+
+Route::get('/data-lab-batch-download/{id}', [FileDownloadController::class, 'DataLabBatchDownload'])
+    ->name('data-lab.batch.download');
+Route::get('/lab/preview/{path}', [FileDownloadController::class, 'DataLabPreview'])
+    ->name('lab.preview');

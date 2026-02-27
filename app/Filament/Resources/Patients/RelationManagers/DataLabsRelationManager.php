@@ -31,8 +31,8 @@ class DataLabsRelationManager extends RelationManager
                 | Thumbnail di tabel (ambil gambar pertama kalau array)
                 |--------------------------------------------------------------------------
                 */
-               ImageColumn::make('images')
-    ->label('Hasil Lab'),
+                ImageColumn::make('images')
+                    ->label('Hasil Lab'),
                 TextColumn::make('created_at')
                     ->label('Tanggal')
                     ->dateTime('d M Y H:i')
@@ -67,20 +67,21 @@ class DataLabsRelationManager extends RelationManager
                                 | TAMPIL SEMUA GAMBAR (support array)
                                 |--------------------------------------------------------------------------
                                 */
-                             ImageEntry::make('images')
-    ->label('Hasil Lab')
-    ->getStateUsing(fn ($record) =>
-        is_array($record->images)
-            ? $record->images
-            : [$record->images]
-    )
-    ->url(function ($state) {
-        return route('lab.preview', [
-            'path' => str_replace('/', '|', $state),
-        ]);
-    })
-    ->openUrlInNewTab()
-    ->columnSpanFull(),
+                                ImageEntry::make('images')
+                                    ->label('Hasil Lab')
+                                    ->getStateUsing(
+                                        fn($record) =>
+                                        is_array($record->images)
+                                            ? $record->images
+                                            : [$record->images]
+                                    )
+                                    ->url(function ($state) {
+                                        return route('lab.preview', [
+                                            'path' => str_replace('/', '|', $state),
+                                        ]);
+                                    })
+                                    ->openUrlInNewTab()
+                                    ->columnSpanFull(),
 
                                 TextEntry::make('created_at')
                                     ->label('Dibuat Pada')
@@ -94,25 +95,25 @@ class DataLabsRelationManager extends RelationManager
                 |--------------------------------------------------------------------------
                 */
 
-               Action::make('download_lab')
-    ->label('Unduh')
-    ->icon('heroicon-o-arrow-down-tray')
-    ->color('success')
-    ->visible(fn ($record) => filled($record->images))
-    ->url(function ($record) {
+                Action::make('download_lab')
+                    ->label('Unduh')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->visible(fn($record) => filled($record->images))
+                    ->url(function ($record) {
 
-        $image = is_array($record->images)
-            ? ($record->images[0] ?? null)
-            : $record->images;
+                        $image = is_array($record->images)
+                            ? ($record->images[0] ?? null)
+                            : $record->images;
 
-        if (! $image) {
-            return null;
-        }
+                        if (! $image) {
+                            return null;
+                        }
 
-        return route('lab.download', [
-            'path' => str_replace('/', '|', $image),
-        ]);
-    }),
+                        return route('data-lab.batch.download', [
+                            'id' => $record->id,
+                        ]);
+                    }),
             ]);
     }
 }

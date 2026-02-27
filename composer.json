@@ -11,7 +11,8 @@
         "bezhansalleh/filament-shield": "^4.0",
         "filament/filament": "^4.0",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "maestroerror/php-heic-to-jpg": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

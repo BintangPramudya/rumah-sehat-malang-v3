@@ -113,19 +113,22 @@ class TerapiBalursRelationManager extends RelationManager
                             ->schema([
                                 TextEntry::make('rokok')
                                     ->label('Rokok')
-                                    ->formatStateUsing(fn ($state) =>
+                                    ->formatStateUsing(
+                                        fn($state) =>
                                         is_array($state) ? implode(', ', $state) : $state
                                     ),
 
                                 TextEntry::make('enema')
                                     ->label('Enema')
-                                    ->formatStateUsing(fn ($state) =>
+                                    ->formatStateUsing(
+                                        fn($state) =>
                                         is_array($state) ? implode(', ', $state) : $state
                                     ),
 
                                 TextEntry::make('minum')
                                     ->label('Minum')
-                                    ->formatStateUsing(fn ($state) =>
+                                    ->formatStateUsing(
+                                        fn($state) =>
                                         is_array($state) ? implode(', ', $state) : $state
                                     ),
 
@@ -139,13 +142,29 @@ class TerapiBalursRelationManager extends RelationManager
                         Section::make('Dokumentasi')
                             ->columns(2)
                             ->schema([
+
                                 ImageEntry::make('image_tembaga')
                                     ->label('Foto Tembaga')
-                                    ->disk('public'),
+                                    ->disk('public')
+                                    ->url(
+                                        fn($state) =>
+                                        route('terapi.preview', [
+                                            'path' => str_replace('/', '|', $state),
+                                        ])
+                                    )
+                                    ->openUrlInNewTab(),
 
                                 ImageEntry::make('image_patient')
                                     ->label('Foto Pasien')
-                                    ->disk('public'),
+                                    ->disk('public')
+                                    ->url(
+                                        fn($state) =>
+                                        route('terapi.preview', [
+                                            'path' => str_replace('/', '|', $state),
+                                        ])
+                                    )
+                                    ->openUrlInNewTab(),
+
                             ]),
                     ]),
 
@@ -159,8 +178,9 @@ class TerapiBalursRelationManager extends RelationManager
                     ->label('Unduh Foto Tembaga')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
-                    ->visible(fn ($record) => filled($record->image_tembaga))
-                    ->url(fn ($record) =>
+                    ->visible(fn($record) => filled($record->image_tembaga))
+                    ->url(
+                        fn($record) =>
                         route('file.download', [
                             'path' => str_replace('/', '|', $record->image_tembaga),
                         ])
@@ -170,8 +190,9 @@ class TerapiBalursRelationManager extends RelationManager
                     ->label('Unduh Foto Kondisi Pasien')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('primary')
-                    ->visible(fn ($record) => filled($record->image_patient))
-                    ->url(fn ($record) =>
+                    ->visible(fn($record) => filled($record->image_patient))
+                    ->url(
+                        fn($record) =>
                         route('file.download', [
                             'path' => str_replace('/', '|', $record->image_patient),
                         ])
