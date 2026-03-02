@@ -15,12 +15,13 @@ class Consultation extends Model
         'past_medical_history',
         'physical_examination',
         'merokok',
-	'merokok',
+        'merokok',
         'diagnosis',
         'treatment_plan',
         'doctor_notes',
         'consultation_datetime',
         'teraphist_notes',
+        'informasi_ruumah_sehat_LPPRB',
         'created_at',
         'updated_at'
     ];
@@ -47,6 +48,4 @@ class Consultation extends Model
     {
         return $this->hasMany(TerapiBalur::class);
     }
-
-    
 }

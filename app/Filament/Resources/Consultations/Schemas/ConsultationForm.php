@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Consultations\Schemas;
 
+use Dom\Text;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -80,6 +81,9 @@ class ConsultationForm
                             ->columnSpanFull(),
                         Textarea::make('teraphist_notes')
                             ->label('Catatan untuk Terapis')
+                            ->columnSpanFull(),
+                        Textarea::make('informasi_ruumah_sehat_LPPRB')
+                            ->label('Informasi Rumah Sehat LPPRB')
                             ->columnSpanFull(),
                     ]),
 
