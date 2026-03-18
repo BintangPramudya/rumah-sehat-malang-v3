@@ -23,6 +23,8 @@ class PatientsTable
             ->columns([
                 ImageColumn::make('image')
                     ->label('Foto Pasien')
+                    ->getStateUsing(fn($record) => $record->image)
+                    ->disk('public')
                     ->circular()
                     ->size(50),
                 TextColumn::make('medical_record_number')
@@ -49,23 +51,23 @@ class PatientsTable
                         'danger' => 'Perempuan',
                     ]),
 
-		TextColumn::make('therapist_name')
-    ->label('Terapis')
-    ->getStateUsing(function ($record) {
-        $consultation = $record->consultations()
-            ->latest()
-            ->first();
+                TextColumn::make('therapist_name')
+                    ->label('Terapis')
+                    ->getStateUsing(function ($record) {
+                        $consultation = $record->consultations()
+                            ->latest()
+                            ->first();
 
-        return $consultation?->therapist?->name ?? 'Belum Ditentukan';
-    })
-    ->badge()
-    ->color(function ($state) {
-        if ($state === 'Belum Ditentukan') {
-            return 'gray';
-        }
+                        return $consultation?->therapist?->name ?? 'Belum Ditentukan';
+                    })
+                    ->badge()
+                    ->color(function ($state) {
+                        if ($state === 'Belum Ditentukan') {
+                            return 'gray';
+                        }
 
-        return 'warning'; 
-    }),
+                        return 'warning';
+                    }),
 
                 TextColumn::make('address')
                     ->label('Alamat')
@@ -88,7 +90,7 @@ class PatientsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 // bisa ditambah filter gender, tanggal, dll
             ])

@@ -45,7 +45,7 @@ class DataLabResource extends Resource
             'index' => ListDataLabs::route('/'),
             'create' => CreateDataLab::route('/create'),
             'edit' => EditDataLab::route('/{record}/edit'),
-            'view' => Pages\ViewDataLab::route('/{record}'),
+
         ];
     }
 

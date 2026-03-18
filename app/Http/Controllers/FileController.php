@@ -1,3 +1,4 @@
+<?php
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 

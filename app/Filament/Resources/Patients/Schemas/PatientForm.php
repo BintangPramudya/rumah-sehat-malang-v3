@@ -58,6 +58,7 @@ class PatientForm
                         FileUpload::make('image')
                             ->label('Foto Pasien')
                             ->image()
+                            ->disk('public')
                             ->directory('patients')
                             ->imagePreviewHeight('150')
                             ->columnSpanFull(),

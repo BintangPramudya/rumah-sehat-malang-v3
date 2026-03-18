@@ -49,7 +49,7 @@ class JadwalHariInisTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('tanggal', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->recordActions([
                 EditAction::make(),
                 Action::make('konsultasi')

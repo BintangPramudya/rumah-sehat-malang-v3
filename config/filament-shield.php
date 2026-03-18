@@ -107,6 +107,12 @@ return [
         
     ],
 
+
+    'navigation' => [
+    'group' => 'User Setting', // atau "System"
+    'sort' => 99,
+    'icon' => 'heroicon-o-shield-check',
+],
     /*
     |--------------------------------------------------------------------------
     | Policies

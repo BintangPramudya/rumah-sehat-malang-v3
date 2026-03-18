@@ -75,11 +75,7 @@ class DataLabsRelationManager extends RelationManager
                                             ? $record->images
                                             : [$record->images]
                                     )
-                                    ->url(function ($state) {
-                                        return route('lab.preview', [
-                                            'path' => str_replace('/', '|', $state),
-                                        ]);
-                                    })
+                                    ->url(fn($state) => asset('storage/' . $state))
                                     ->openUrlInNewTab()
                                     ->columnSpanFull(),
 

@@ -77,7 +77,7 @@ class TerapiBalursTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('therapy_datetime', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->recordActions([
                 EditAction::make(),
 

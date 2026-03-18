@@ -60,7 +60,7 @@ class ConsultationsTable
                             : 'heroicon-o-x-circle';
                     }),
             ])
-            ->defaultSort('consultation_datetime', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 // bisa ditambahkan filter tanggal / dokter
             ])
